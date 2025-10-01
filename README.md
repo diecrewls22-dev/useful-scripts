@@ -104,3 +104,75 @@ if __name__ == "__main__":
         password = generate_password(args.length, not args.no_special)
         print(f"{i+1}. {password}")
 ```
+### Batch: File Organizer (batch/file-organizer.bat)
+```batch
+@echo off
+setlocal enabledelayedexpansion
+
+echo File Organizer Script
+echo.
+
+if "%~1"=="" (
+    set "target_dir=%cd%"
+) else (
+    set "target_dir=%~1"
+)
+
+echo Organizing files in: %target_dir%
+echo.
+
+set /a moved=0
+
+for %%f in ("%target_dir%\*.*") do (
+    if not "%%~xf"=="" (
+        if not "%%~xf"==".bat" (
+            set "ext=%%~xf"
+            set "ext=!ext:~1!"
+            
+            if not exist "%target_dir%\!ext!" (
+                mkdir "%target_dir%\!ext!"
+            )
+            
+            move "%%f" "%target_dir%\!ext!\"
+            set /a moved+=1
+            echo Moved: %%~nxf
+        )
+    )
+)
+
+echo.
+echo Organization complete! Moved !moved! files.
+pause
+```
+### JavaScript: JSON Formatter (javascript/json-formatter.js)
+```javascript
+const fs = require('fs');
+const path = require('path');
+
+function formatJSON(filePath) {
+    try {
+        const data = fs.readFileSync(filePath, 'utf8');
+        const jsonObj = JSON.parse(data);
+        const formattedJSON = JSON.stringify(jsonObj, null, 2);
+        
+        const dir = path.dirname(filePath);
+        const ext = path.extname(filePath);
+        const name = path.basename(filePath, ext);
+        const outputPath = path.join(dir, `${name}_formatted${ext}`);
+        
+        fs.writeFileSync(outputPath, formattedJSON);
+        console.log(`Formatted JSON saved to: ${outputPath}`);
+    } catch (error) {
+        console.error('Error:', error.message);
+    }
+}
+
+// Usage
+if (process.argv.length < 3) {
+    console.log('Usage: node json-formatter.js <file.json>');
+    process.exit(1);
+}
+
+const filePath = process.argv[2];
+formatJSON(filePath);
+```
